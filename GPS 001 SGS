@@ -1,0 +1,32 @@
+import serial
+import pynmea2
+
+def parseGPS(data):
+    # print(data) GPGGA | GGA
+    if data.find('GPGGA') > 0:
+        # print(data)
+        msg = pynmea2.parse(data)
+        print ("msg : " , msg)
+        gps_latitude = msg.lat
+        gps_longitude = msg.lon
+        print("gps : " ,  gps_latitude , "," ,gps_longitude )
+        if (gps_latitude):
+            url = "https://www.google.com/maps/@" + str(gps_latitude) + "," + str(gps_longitude) + ",19z"
+        else:
+            url = None
+        return url
+    return None
+serialPort = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.5)
+while True:
+    try:
+        #data = serialPort.readline().decode()
+        #print(data)
+        data =  serialPort.readline().decode()
+        #print(data)
+        url = parseGPS(data)
+        if (url):
+            print("location url : " , url)
+    
+    except Exception as e:
+        print("exception : " , e)
+
