@@ -1,0 +1,17 @@
+import RPi.GPIO as GPIO
+from time import sleep
+
+gas_pin = 21
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(gas_pin, GPIO.IN)
+
+
+while True:
+    gas = GPIO.input(gas_pin)
+    print("gas value: " , gas)
+    if (gas==0):
+        print("gas detected")
+    sleep(0.4)
+    
+    
+
