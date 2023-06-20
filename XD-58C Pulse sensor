@@ -1,0 +1,35 @@
+import RPi.GPIO as GPIO
+import time
+
+pulse_pin = 20
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pulse_pin, GPIO.IN)
+
+last_time = time.time()
+pulse_count = 0
+pulse_rate = 0
+
+def count_pulse(channel):
+    global last_time, pulse_count
+    current_time = time.time()
+    if current_time - last_time > 0.1:
+        pulse_count += 1
+        last_time = current_time
+
+GPIO.add_event_detect(pulse_pin, GPIO.RISING, callback=count_pulse)
+
+while True:
+    time.sleep(1)
+    pulse_rate = pulse_count / 10 * 60
+    print("Pulse rate: {:.1f} bpm".format(pulse_rate))
+    pulse_count = 0
+    # Check if pulse rate is not normal
+    if pulse_rate < 60 or pulse_rate > 100:
+        print("Pulse rate not normal! Alert!")
+        # Add code here to trigger an alarm or notification
+
+
+# Clean upthe GPIO
+GPIO.remove_event_detect(pulse_pin)
+GPIO.cleanup()
+
